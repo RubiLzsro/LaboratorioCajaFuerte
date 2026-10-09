@@ -7,6 +7,7 @@ public class CajaFuerte
     private byte intentosFallidos;
     private double capacidadMaxima;
     private double saldoActual;
+    private boolean alarmaActivada; // NUEVO ATRIBUTO
 
     public CajaFuerte(String numeroSerie, String modelo,
                       int claveAcceso, double capacidadMaxima)
@@ -18,9 +19,10 @@ public class CajaFuerte
         this.estado = false;
         this.intentosFallidos = 0;
         this.saldoActual = 0.0;
+        this.alarmaActivada = false; // La alarma inicia en false
     }
 
-    //Metodo para abrir
+    // Metodo para abrir
     public void abrir(int claveIngresada)
     {
         if (intentosFallidos >= 3)
@@ -29,27 +31,30 @@ public class CajaFuerte
             return;
         }
         if (estado)
-        { // Si ya está abierta
+        {
             System.out.println("La caja fuerte ya esta abierta");
             return;
         }
         if (claveIngresada == claveAcceso)
         {
-            estado = true; // La caja ha sido abierta
-            intentosFallidos = 0; // Reinicia contador
+            estado = true;
+            intentosFallidos = 0;
             System.out.println("Acceso autorizado");
         } else {
             intentosFallidos++; // Suma 1 a intentos fallidos
+
             System.out.println("Clave incorrecta. Intentos restantes: " + (3 - intentosFallidos));
+
             if (intentosFallidos >= 3)
             {
                 estado = false;
+                alarmaActivada = true; // SE ACTIVA LA ALARMA AL LLEGAR A 3 INTENTOS
                 System.out.println("Caja fuerte bloqueada");
             }
         }
     }
 
-    //Metodo para cerrar
+    // Metodo para cerrar
     public void cerrar()
     {
         if (estado)
@@ -61,7 +66,6 @@ public class CajaFuerte
         }
     }
 
-    //Nuevos metodos para operaciones con cantidades double
     public void depositar(double cantidad){
         if (!estado){
             System.out.println("Primero abre la caja");
@@ -77,14 +81,13 @@ public class CajaFuerte
         System.out.println("Depósito realizado");
     }
 
-
     public void retirar(double cantidad){
         if (!estado){
             System.out.println("Primero abre la caja");
             return;
         }
 
-        if (cantidad <=0 || cantidad > saldoActual){
+        if (cantidad <= 0 || cantidad > saldoActual){
             System.out.println("Retiro no permitido");
             return;
         }
@@ -92,7 +95,6 @@ public class CajaFuerte
         saldoActual -= cantidad;
         System.out.println("Retiro realizado");
     }
-
 
     public void mostrarEstado(){
         System.out.println("Modelo: " + modelo);
@@ -107,11 +109,13 @@ public class CajaFuerte
 
         System.out.println("Intentos fallidos: " + intentosFallidos);
 
+        // Muestra el valor de la alarma en el estado
+        System.out.println("Alarma activada: " + alarmaActivada);
+
         if (estado){
             System.out.println("Saldo: " + saldoActual);
         }else{
             System.out.println("Saldo: información protegida");
         }
     }
-
 }
